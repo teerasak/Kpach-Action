@@ -43,11 +43,13 @@ jobs:
     - name: Unpack boot.img
       if: env.USE_BOOT == 'true'
       run: |
+        chmod +x magiskboot
         ./magiskboot unpack boot.img
         mv kernel kernel-b
     
     - name: path kernel
       run: |
+        chmod +x kptools-linux
         ./kptools-linux -p kernel-b --skey ${{ env.SKEY }} --kpimg kpimg-android --out kernel
 
     - name: Update kernel
