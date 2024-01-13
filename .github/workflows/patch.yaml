@@ -24,19 +24,19 @@ jobs:
         echo "MAGISKBOOT=$(cat config.env | grep -w "MAGISKBOOT" | head -n 1 | cut -d "=" -f 2)" >> $GITHUB_ENV
     - name: download file
       run: |
-        if [[ ${{ env.BOOT_FILE }} =~ github ]]; then
+        if [[ ${{ env.BOOT_FILE }} =~ http ]]; then
               wget -O boot.img ${{ env.BOOT_FILE }}
         fi
-        if [[ ${{ env.KERNEL_FILE }} =~ github ]]; then
+        if [[ ${{ env.KERNEL_FILE }} =~ http ]]; then
               wget -O kernel-b ${{ env.KERNEL_FILE }}
         fi
-        if [[ ${{ env.KP_IMG }} =~ github ]]; then
+        if [[ ${{ env.KP_IMG }} =~ http ]]; then
               wget -O kpimg-android ${{ env.KP_IMG }}
         fi
-        if [[ ${{ env.KP_TOOLS }} =~ github ]]; then
+        if [[ ${{ env.KP_TOOLS }} =~ http ]]; then
               wget -O kptools-linux ${{ env.KP_TOOLS }}
         fi
-        if [[ ${{ env.MAGISKBOOT }} =~ github ]]; then
+        if [[ ${{ env.MAGISKBOOT }} =~ http ]]; then
               wget -O magiskboot ${{ env.MAGISKBOOT }}
         fi
 
