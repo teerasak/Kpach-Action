@@ -51,11 +51,12 @@ jobs:
       run: |
         chmod +x kptools-linux
         ./kptools-linux -p kernel-b --skey ${{ env.SKEY }} --kpimg kpimg-android --out kernel
+        rm -rf kernel-b
 
     - name: Update kernel
       uses: actions/upload-artifact@v3
       with:
-        name: kernel-${{ env.BUILD_TIME }}
+        name: kernel
         path: kernel
     - name: Repack boot.img
       if: env.USE_BOOT == 'true'
