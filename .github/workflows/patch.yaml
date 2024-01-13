@@ -50,11 +50,11 @@ jobs:
       with:
         name: kernel-${{ env.BUILD_TIME }}
         path: kernel
-    -name: Repack boot.img
+    - name: Repack boot.img
       if: env.USE_BOOT == 'true'
       run: |
           ./magiskboot repack boot.img
-    -name: Upload boot.img
+    - name: Upload boot.img
       if: env.USE_BOOT == 'true'
       uses: actions/upload-artifact@v3
       with:
