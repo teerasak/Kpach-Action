@@ -1,0 +1,62 @@
+name: Build Kernel
+on:
+  watch:
+    types: [started]
+  workflow_dispatch:
+  #schedule:
+  #    - cron: '00 00 * * 1'
+
+jobs:
+  build:
+    name: Patch Kernel
+    runs-on: ubuntu-latest
+    if: github.event.repository.owner.id == github.event.sender.id
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup Configuration
+      run: |
+        echo "USE_BOOT=$(cat config.env | grep -w "USE_BOOT" | head -n 1 | cut -d "=" -f 2)" >> $GITHUB_ENV
+        echo "BOOT_FILE=$(cat config.env | grep -w "BOOT_FILE" | head -n 1 | cut -d "=" -f 2)" >> $GITHUB_ENV
+        echo "KERNEL_FILE=$(cat config.env | grep -w "KERNEL_FILE" | head -n 1 | cut -d "=" -f 2)" >> $GITHUB_ENV
+        echo "KP_IMG=$(cat config.env | grep -w "KP_IMG" | head -n 1 | cut -d "=" -f 2)" >> $GITHUB_ENV
+        echo "KP_TOOLS=$(cat config.env | grep -w "KP_TOOLS" | head -n 1 | cut -d "=" -f 2)" >> $GITHUB_ENV
+        echo "SKEY=$(cat config.env | grep -w "SKEY" | head -n 1 | cut -d "=" -f 2)" >> $GITHUB_ENV
+        echo "MAGISKBOOT=$(cat config.env | grep -w "MAGISKBOOT" | head -n 1 | cut -d "=" -f 2)" >> $GITHUB_ENV
+    - name: download file
+      if [[ ${{ env.BOOT_FILE }} =~ github ]]; then
+            wget -O boot.img ${{ env.BOOT_FILE }}
+      if [[ ${{ env.KERNEL_FILE }} =~ github ]]; then
+            wget -O kernel-b ${{ env.KERNEL_FILE }}
+      if [[ ${{ env.KP_IMG }} =~ github ]]; then
+            wget -O kpimg-android ${{ env.KP_IMG }}
+      if [[ ${{ env.KP_TOOLS }} =~ github ]]; then
+            wget -O kptools-linux ${{ env.KP_TOOLS }}
+      if [[ ${{ env.MAGISKBOOT }} =~ github ]]; then
+            wget -O magiskboot ${{ env.MAGISKBOOT }}
+
+    - name: Unpack boot.img
+      if: env.USE_BOOT == 'true'
+      run: |
+        ./magiskboot unpack boot.img
+        mv kernel kernel-b
+    
+    - name: path kernel
+      run: |
+        ./kptools-linux -p kernel-b --skey ${{ env.SKEY }} --kpimg kpimg-android --out kernel
+
+    - name: Update kernel
+      uses: actions/upload-artifact@v3
+      with:
+        name: kernel-${{ env.BUILD_TIME }}
+        path: kernel
+    -name: Repack boot.img
+      if: env.USE_BOOT == 'true'
+        run: |
+          ./magiskboot repack boot.img
+     -name: Upload boot.img
+      if: env.USE_BOOT == 'true'
+      uses: actions/upload-artifact@v3
+      with:
+        name: new-boot.img
+        path: new-boot.img
+          
