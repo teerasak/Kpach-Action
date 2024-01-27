@@ -50,7 +50,12 @@ jobs:
     - name: path kernel
       run: |
         chmod +x kptools-linux
-        ./kptools-linux -p --image kernel-b --skey ${{ env.SKEY }} --kpimg kpimg-android --out kernel
+        if  [[ ${{ env.KP_TOOLS }} =~ 0.8 ]]; then
+          ./kptools-linux -p kernel-b --skey ${{ env.SKEY }} --kpimg kpimg-android --out kernel
+        else
+          ./kptools-linux -p --image kernel-b --skey ${{ env.SKEY }} --kpimg kpimg-android --out kernel
+        fi
+        
         rm -rf kernel-b
 
     - name: Update kernel
