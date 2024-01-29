@@ -27,6 +27,12 @@ jobs:
         if [[ ${{ env.BOOT_FILE }} =~ http ]]; then
               wget -O boot.img ${{ env.BOOT_FILE }}
         fi
+        if [[ ${{ env.BOOT_FILE }} =~ zip ]]; then
+          unzip boot.zip
+        fi
+        if [[ ${{ env.BOOT_FILE }} =~ tar.gz ]]; then
+          tar -zxvf boot.tar.gz
+        fi
         if [[ ${{ env.KERNEL_FILE }} =~ http ]]; then
               wget -O kernel-b ${{ env.KERNEL_FILE }}
         fi
@@ -58,7 +64,7 @@ jobs:
         
         rm -rf kernel-b
 
-    - name: Update kernel
+    - name: Upload kernel
       uses: actions/upload-artifact@v3
       with:
         name: kernel
